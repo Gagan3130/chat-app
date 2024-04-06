@@ -44,9 +44,9 @@ var onlineUsers = [];
 
 const { Server } = require("socket.io");
 const io = new Server({
+  pingTimeout: 60000,
   cors: {
     origin: ["http://localhost:3000", "http://localhost:3001"],
-    // credentials: true,
   },
 });
 

@@ -103,7 +103,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   } else {
     throw new NotFoundError({
       message: "User not found",
-      code: errorCodes.USER_NOT_FOUND,
+      code: errorCodes.UNAUTHORISED
     });
   }
 });
