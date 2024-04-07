@@ -61,7 +61,7 @@ const ContactsDrawer = ({ children }: { children: ReactNode }) => {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <header className="pr-[20px] pl-[23px] flex flex-col justify-end bg-c-button-secondary h-[260px]">
+          <header className="pr-[20px] pl-[23px] flex flex-col justify-end bg-c-button-secondary pt-12">
             <Box className="h-[60px] flex items-center text-white">
               <div className="w-[53px] cursor-pointer" onClick={onClose}>
                 <ArrowBackIcon w={6} h={6} />
@@ -72,7 +72,7 @@ const ContactsDrawer = ({ children }: { children: ReactNode }) => {
             </Box>
           </header>
           <Box
-            className="h-[120px] w-full flex items-center border-b border-c-chat-border"
+            className="py-2 w-full flex items-center border-b border-c-chat-border"
             boxShadow="0 2px 3px #0b141a14"
           >
             <div className="px-3 bg-white w-full flex items-center">
@@ -87,19 +87,19 @@ const ContactsDrawer = ({ children }: { children: ReactNode }) => {
             </Box>
             {Object.keys(userList).map((item) => (
               <>
-                <Box className="h-[72px] overflow-hidden">
+                <div className="h-[72px] overflow-hidden">
                   <div className="pt-[30px] pb-[15px] pl-[32px] text-body-16 text-c-button-secondary ">
                     {item}
                   </div>
-                </Box>
+                </div>
                 {userList?.[item]?.map((user) => (
-                  <Box className="hover:bg-c-chat-border" onClick={()=>handleAccessChat(user.id)}>
+                  <div className="hover:bg-c-chat-border" onClick={()=>handleAccessChat(user.id)}>
                     <UserChatItem
                       avatarImageSrc={user?.pic}
                       content="Available"
                       chatName={user?.name}
                     />
-                  </Box>
+                  </div>
                 ))}
               </>
             ))}
