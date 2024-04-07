@@ -20,7 +20,7 @@ const UserChatItem = (props: propType) => {
     notifications = 0,
   } = props;
   return (
-    <Box className="h-[72px] flex relative" cursor="pointer">
+    <div className="h-[72px] flex relative cursor-pointer">
       <Box className="flex items-center px-4">
         <Avatar
           size="md"
@@ -77,7 +77,7 @@ const UserChatItem = (props: propType) => {
           )}
         </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 

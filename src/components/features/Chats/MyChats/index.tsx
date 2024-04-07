@@ -163,15 +163,16 @@ const MyChats = () => {
           {chatData && (
             <Stack overflowY="scroll" spacing={0}>
               {chatData.map((chat: Chat) => (
-                <Box
+                <div
                   onClick={() => {
-                    console.log("here is");
                     changeCurrentChat(chat);
                   }}
-                  bg={currentChat?.id === chat.id ? "#f0f2f5" : "#ffffff"}
-                  cursor="pointer"
-                  color="black"
                   key={chat.id}
+                  className={`cursor-pointer text-black ${
+                    currentChat?.id === chat.id
+                      ? "bg-c-panel-header-background"
+                      : "bg-white"
+                  } `}
                 >
                   <UserChatItem
                     avatarName={
@@ -201,14 +202,13 @@ const MyChats = () => {
                     }
                     notifications={notifications[chat.id]}
                   />
-                </Box>
+                </div>
               ))}
             </Stack>
           )}
-          {/* {chatsLoading && <SearchUser />} */}
         </Box>
         {openUnreadMessage && !chatData.length && (
-          <Box className="bg-white w-full h-full flex justify-center items-center">
+          <Box className="bg-white w-full m-auto flex justify-center items-center">
             <div className="flex flex-col justify-center w-full items-center gap-4">
               <h3 className="text-c-icon-lighter font-medium text-body-16">
                 No Unread Chats
