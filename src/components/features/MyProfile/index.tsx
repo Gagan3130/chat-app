@@ -33,6 +33,7 @@ const MyProfile = (props: propType) => {
           boxSize="150px"
           src={user?.pic}
           alt={user?.name}
+          objectFit="cover"
         />
         <Text fontSize={{ base: "28px", md: "30px" }} fontFamily="Work sans">
           Email: {user?.email}
