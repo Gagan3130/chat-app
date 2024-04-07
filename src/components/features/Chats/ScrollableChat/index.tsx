@@ -99,24 +99,24 @@ const ScrollabelChat = ({
   const loggedUserId = getLoggedUser();
   const lastMessage = messagesList.at(-1);
   const loggedUser = getLoggedUser();
-  const topDivRef = useRef<any>(null);
   const hasSeen = lastMessage?.sender.id === loggedUser && hasSeenMessage;
-
   const canLoadMore = messagesList.length < totalMessages;
+  const page = Math.ceil(messagesList.length / perPage)
 
   const fetchMoreMessages = useCallback(debounce(changePage, 100), []);
+  const element = document.getElementsByClassName('scollable-feed')
 
 
   useEffect(() => {
     function handleScroll() {
-      if (topDivRef?.current?.scrollTop === 0 && canLoadMore && !loadingMessage) {
-        fetchMoreMessages(1);
+      if (element[0]?.scrollTop === 0 && canLoadMore && !loadingMessage) {
+        fetchMoreMessages(page + 1);
       }
     }
 
-    topDivRef?.current?.addEventListener("scroll", handleScroll, true);
+    element[0]?.addEventListener("scroll", handleScroll, true);
     return () => {
-      topDivRef?.current?.removeEventListener("scroll", handleScroll, true);
+      element[0]?.removeEventListener("scroll", handleScroll, true);
     };
   }, [canLoadMore, loadingMessage]);
 
@@ -137,8 +137,7 @@ const ScrollabelChat = ({
     );
   };
   return (
-    <div className="overflow-scroll" ref={topDivRef}>
-      <ScrollableFeed className=" overflow-y-hidden">
+      <ScrollableFeed className="scollable-feed">
         {messagesList.map((item, index) => {
           const isSameSender =
             item.sender.id === messagesList[index + 1]?.sender.id;
@@ -227,7 +226,6 @@ const ScrollabelChat = ({
           );
         })}
       </ScrollableFeed>
-    </div>
   );
 };
 

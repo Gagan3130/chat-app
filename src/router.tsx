@@ -5,6 +5,7 @@ import Chat from "./page/Chat";
 import { useEffect } from "react";
 import { cookiesStore } from "./lib/utils.lb";
 import { AppConstants } from "./lib/constants";
+import ChatContextProvider from "./context/chatProvider";
 
 export function Router() {
   const user = cookiesStore.get({ key: AppConstants.cookieKeys.TOKEN });
@@ -20,7 +21,15 @@ export function Router() {
     <div className="app">
       <Routes>
         <Route key={"login"} path="/" element={<Home />} />
-        <Route key={"chat"} path="/chat" element={<Chat />} />
+        <Route
+          key={"chat"}
+          path="/chat"
+          element={
+            <ChatContextProvider>
+              <Chat />
+            </ChatContextProvider>
+          }
+        />
       </Routes>
     </div>
   );
