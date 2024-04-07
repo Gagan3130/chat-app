@@ -50,23 +50,10 @@ const Chatbox = () => {
   const [typing, setTyping] = useState(false);
   const [hasSeenMessage, setSeenMessage] = useState(false);
   const [lastMessagesId, setLastMessagesId] = useState<string>();
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const [istyping, setIsTyping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-  const {
-    // apiData: messageList,
-    loading,
-    // setApiData: setMessageList,
-    apiRequestService: getMessageServices,
-  } = useApiRequest();
+  const { loading, apiRequestService: getMessageServices } = useApiRequest();
   const [inputMessage, setInputMessage] = useState("");
   const loggedUser = getLoggedUser();
   const [messageList, setMessageList] = useState<{
@@ -79,7 +66,6 @@ const Chatbox = () => {
   )?.id;
 
   const isOnline = onlineUsers.some((elem) => elem.userId === chatUserId);
-  const canLoadMore = messageList.messages.length < messageList.count;
 
   const readMessage = async (chatId: string) => {
     const res = await readMessageService<{}, Message[]>({
@@ -121,6 +107,28 @@ const Chatbox = () => {
       { count: number; messages: Message[] }
     >({
       method: "get",
+      url: `${AppConfig.endpoints.message}/${currentChat?.id}`,
+    });
+    if (res.success === true) {
+      setMessageList((val: { count: number; messages: Message[] }) => {
+        return {
+          count: res?.data?.count ?? 0,
+          messages: [...(res.data?.messages ?? [])],
+        };
+      });
+      setLastMessagesId(res.data?.messages?.at(-1)?.id);
+      setSeenMessage(
+        res.data?.messages?.at(-1)?.readBy.length === currentChat?.users.length
+      );
+    }
+  };
+
+  const scrollMoreMessages = async (page: number) => {
+    const res = await getMessageServices<
+      null,
+      { count: number; messages: Message[] }
+    >({
+      method: "get",
       url: `${AppConfig.endpoints.message}/${currentChat?.id}?page=${page}`,
     });
     if (res.success === true) {
@@ -131,9 +139,6 @@ const Chatbox = () => {
         };
       });
       setLastMessagesId(res.data?.messages?.at(-1)?.id);
-      setSeenMessage(
-        res.data?.messages?.at(-1)?.readBy.length === currentChat?.users.length
-      );
     }
   };
 
@@ -149,7 +154,7 @@ const Chatbox = () => {
       fetchMessages();
     }
     selectedChatCompare = currentChat;
-  }, [currentChat, socket, page]);
+  }, [currentChat, socket]);
 
   const sendMessage = async (message: string) => {
     if (!message) return;
@@ -232,11 +237,6 @@ const Chatbox = () => {
     }
   }, [lastMessagesId]);
 
-
-  if (!currentChat) {
-    return <EmptyChatBox />;
-  }
-
   return (
     <>
       <Box
@@ -313,8 +313,10 @@ const Chatbox = () => {
             messagesList={messageList.messages}
             totalMessages={messageList?.count}
             hasSeenMessage={hasSeenMessage}
-            changePage={(num) => setPage((val) => val + num)}
-            loadingMessage = {loading}
+            changePage={(num) => {
+              scrollMoreMessages(num);
+            }}
+            loadingMessage={loading}
           />
         </Box>
         <footer className="min-h-[62px] w-full box-border relative order-3">
@@ -336,7 +338,7 @@ const Chatbox = () => {
         <MyProfile
           isOpen={isOpen}
           onClose={onClose}
-          user={getSenderFull(profileData?.id ?? "", currentChat.users)}
+          user={getSenderFull(profileData?.id ?? "", currentChat?.users ?? [])}
         />
       ) : (
         <GroupChatModal
