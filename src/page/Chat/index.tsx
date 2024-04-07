@@ -8,7 +8,6 @@ import EmptyChatBox from "../../components/features/Chats/EmptyChatBox";
 
 const Chat = () => {
   const {currentChat} = useChatContext()
-  console.log(currentChat,"current")
   return (
       <Layout>
         <Box
