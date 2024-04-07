@@ -53,14 +53,6 @@ const Chatbox = () => {
   // const [page, setPage] = useState(1);
   const [istyping, setIsTyping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
   const { loading, apiRequestService: getMessageServices } = useApiRequest();
   const [inputMessage, setInputMessage] = useState("");
   const loggedUser = getLoggedUser();
@@ -69,14 +61,11 @@ const Chatbox = () => {
     messages: Message[];
   }>({ count: 0, messages: [] });
 
-  console.log(messageList, "messageList");
-
   const chatUserId = currentChat?.users.find(
     (item) => item.id !== loggedUser
   )?.id;
 
   const isOnline = onlineUsers.some((elem) => elem.userId === chatUserId);
-  const canLoadMore = messageList.messages.length < messageList.count;
 
   const readMessage = async (chatId: string) => {
     const res = await readMessageService<{}, Message[]>({
