@@ -196,7 +196,7 @@ const Chatbox = () => {
         console.log("inside vvvvvv");
         setMessageList((prev: { count: number; messages: Message[] }) => {
           return {
-            count: prev.count,
+            count: prev.count + 1, 
             messages: [...prev.messages, message],
           };
         });
