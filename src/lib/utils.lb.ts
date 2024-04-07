@@ -186,7 +186,7 @@ export const getSlicedSubstring = (str: string, sliceLength?: number) => {
   if (!sliceLength) {
     sliceLength = 50;
   }
-  return str.length > sliceLength
-    ? str.substring(0, sliceLength + 1) + "..."
+  return str?.length > sliceLength
+    ? str?.substring(0, sliceLength + 1) + "..."
     : str;
 };

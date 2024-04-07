@@ -185,15 +185,15 @@ const MyChats = () => {
                     }
                     chatName={
                       !chat.isGroupChat
-                        ? getSender(loggedUser, chat.users)
-                        : chat.chatName
+                        ? getSender(loggedUser, chat?.users)
+                        : chat?.chatName
                     }
                     chatLastTime={chatLastTimeAndDay(
                       chat.latestMessage?.createdAt
                     )}
                     content={
                       <>
-                        {chat.latestMessage.sender.id === loggedUser && (
+                        {chat?.latestMessage?.sender?.id === loggedUser && (
                           <b>You : </b>
                         )}
                         {getSlicedSubstring(chat?.latestMessage?.content)}
