@@ -1,5 +1,6 @@
 export const AppConfig = {
-    baseUrl: 'http://localhost:5050',
+    // baseUrl: 'http://localhost:5050',
+    baseUrl: 'https://chat-app-api-d48e.onrender.com',
     cloudBaseUrl:"https://api.cloudinary.com",
     endpoints: {
      user: '/api/user',
