@@ -157,6 +157,7 @@ export const getMessageDay = (dateTime: Date) => {
 };
 
 export const chatLastTimeAndDay = (dateTime: Date) => {
+  if(!dateTime) return ''
   const d = getMessageDay(dateTime);
   if (d === "Today") {
     return getChatTime(dateTime);

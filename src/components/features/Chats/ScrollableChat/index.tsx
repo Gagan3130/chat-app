@@ -10,14 +10,7 @@ import {
 } from "../../../../lib/utils.lb";
 import TailInIcon from "../../../ui/Icons/tail-in.svg";
 import TailOut from "../../../ui/Icons/tail-out-svg";
-import {
-  LegacyRef,
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect } from "react";
 
 const MyMessages = ({ item }: { item: Message }) => {
   return (
@@ -87,25 +80,24 @@ const ScrollabelChat = ({
   changePage,
   totalMessages = 0,
   perPage = 50,
-  loadingMessage = false
+  loadingMessage = false,
 }: {
   messagesList: Message[];
   hasSeenMessage: boolean;
   changePage: (val: number) => void;
   totalMessages?: number;
   perPage?: number;
-  loadingMessage?: boolean
+  loadingMessage?: boolean;
 }) => {
   const loggedUserId = getLoggedUser();
   const lastMessage = messagesList.at(-1);
   const loggedUser = getLoggedUser();
   const hasSeen = lastMessage?.sender.id === loggedUser && hasSeenMessage;
   const canLoadMore = messagesList.length < totalMessages;
-  const page = Math.ceil(messagesList.length / perPage)
+  const page = Math.ceil(messagesList.length / perPage);
 
   const fetchMoreMessages = useCallback(debounce(changePage, 100), []);
-  const element = document.getElementsByClassName('scollable-feed')
-
+  const element = document.getElementsByClassName("scollable-feed");
 
   useEffect(() => {
     function handleScroll() {
@@ -137,51 +129,11 @@ const ScrollabelChat = ({
     );
   };
   return (
-      <ScrollableFeed className="scollable-feed">
-        {messagesList.map((item, index) => {
-          const isSameSender =
-            item.sender.id === messagesList[index + 1]?.sender.id;
-          if (item.sender.id === loggedUserId) {
-            return (
-              <>
-                {getMessageDay(item.createdAt) !==
-                  getMessageDay(messagesList[index - 1]?.createdAt) &&
-                  renderMessageDay(item)}
-                <Box
-                  mb={isSameSender ? "3px" : "15px"}
-                  display="flex"
-                  justifyContent="end"
-                  padding="0 50px"
-                  position="relative"
-                  id={`message-${item.id}`}
-                >
-                  {!isSameSender && (
-                    <Box
-                      as="span"
-                      position="absolute"
-                      right="43px"
-                      top={0}
-                      width={"16px"}
-                      height={"16px"}
-                    >
-                      <TailOut colour="#dcf8c6" />
-                    </Box>
-                  )}
-                  <MyMessages item={item} />
-                  {hasSeen && item.id === lastMessage?.id && (
-                    <Text
-                      position="absolute"
-                      bottom="-16px"
-                      fontSize="12px"
-                      color="grey"
-                    >
-                      seen
-                    </Text>
-                  )}
-                </Box>
-              </>
-            );
-          }
+    <ScrollableFeed className="scollable-feed">
+      {messagesList.map((item, index) => {
+        const isSameSender =
+          item.sender.id === messagesList[index + 1]?.sender.id;
+        if (item.sender.id === loggedUserId) {
           return (
             <>
               {getMessageDay(item.createdAt) !==
@@ -190,42 +142,82 @@ const ScrollabelChat = ({
               <Box
                 mb={isSameSender ? "3px" : "15px"}
                 display="flex"
-                justifyContent="start"
+                justifyContent="end"
                 padding="0 50px"
                 position="relative"
                 id={`message-${item.id}`}
               >
-                {!isSameSender && item.chat.isGroupChat && (
-                  <Avatar
-                    size="sm"
-                    cursor="pointer"
-                    name={item.sender.name}
-                    src={item.sender.pic}
-                    position="absolute"
-                    left={"10px"}
-                  />
-                )}
                 {!isSameSender && (
                   <Box
                     as="span"
                     position="absolute"
-                    left="43px"
+                    right="43px"
                     top={0}
-                    width={"20px"}
-                    height={"20px"}
+                    width={"16px"}
+                    height={"16px"}
                   >
-                    <TailInIcon colour="#ffffff" />
+                    <TailOut colour="#dcf8c6" />
                   </Box>
                 )}
-                <OtherUserMessages
-                  item={item}
-                  showName={item.chat.isGroupChat && !isSameSender}
-                />
+                <MyMessages item={item} />
+                {hasSeen && item.id === lastMessage?.id && (
+                  <Text
+                    position="absolute"
+                    bottom="-16px"
+                    fontSize="12px"
+                    color="grey"
+                  >
+                    seen
+                  </Text>
+                )}
               </Box>
             </>
           );
-        })}
-      </ScrollableFeed>
+        }
+        return (
+          <>
+            {getMessageDay(item.createdAt) !==
+              getMessageDay(messagesList[index - 1]?.createdAt) &&
+              renderMessageDay(item)}
+            <Box
+              mb={isSameSender ? "3px" : "15px"}
+              display="flex"
+              justifyContent="start"
+              padding="0 50px"
+              position="relative"
+              id={`message-${item.id}`}
+            >
+              {!isSameSender && item.chat.isGroupChat && (
+                <Avatar
+                  size="sm"
+                  cursor="pointer"
+                  name={item.sender.name}
+                  src={item.sender.pic}
+                  position="absolute"
+                  left={"10px"}
+                />
+              )}
+              {!isSameSender && (
+                <Box
+                  as="span"
+                  position="absolute"
+                  left="43px"
+                  top={0}
+                  width={"20px"}
+                  height={"20px"}
+                >
+                  <TailInIcon colour="#ffffff" />
+                </Box>
+              )}
+              <OtherUserMessages
+                item={item}
+                showName={item.chat.isGroupChat && !isSameSender}
+              />
+            </Box>
+          </>
+        );
+      })}
+    </ScrollableFeed>
   );
 };
 
