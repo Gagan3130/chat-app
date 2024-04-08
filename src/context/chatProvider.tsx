@@ -93,7 +93,7 @@ const ChatContextProvider = (props: IChatContextProvider) => {
   // };
 
   useEffect(() => {
-    const connection = io("http://localhost:8080");
+    const connection = io(AppConfig.baseUrl);
     setSocket(connection);
     return () => {
       connection.disconnect();
