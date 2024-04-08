@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Home from "./page/Home";
 import "./App.css";
 import Chat from "./page/Chat";
@@ -10,13 +10,15 @@ import ChatContextProvider from "./context/chatProvider";
 export function Router() {
   const user = cookiesStore.get({ key: AppConstants.cookieKeys.TOKEN });
   const navigate = useNavigate();
+  const location = useLocation()
+
   useEffect(() => {
     if (user) {
       navigate("/chat");
     } else {
       navigate("/");
     }
-  }, []);
+  }, [location]);
   return (
     <div className="app">
       <Routes>
