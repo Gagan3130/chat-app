@@ -28,6 +28,20 @@ interface IChatContextData {
   notifications: Record<string, number>;
   // changeNotifications: (messages: Message[]) => void;
   onlineUsers: { userId: string; socketId: string }[];
+  readMessage: (chatId: string) => Promise<any>;
+  selectedChatCompare: any;
+  messageList: {
+    count: number;
+    messages: Message[];
+  };
+  setMessageList: React.Dispatch<
+    React.SetStateAction<{
+      count: number;
+      messages: Message[];
+    }>
+  >;
+  hasSeenMessage: boolean;
+  setSeenMessage: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ChatContextData = createContext<IChatContextData>({
@@ -44,12 +58,19 @@ export const ChatContextData = createContext<IChatContextData>({
   notifications: {},
   // changeNotifications: () => null,
   onlineUsers: [],
+  readMessage: async () => null,
+  selectedChatCompare: null,
+  messageList: { count: 0, messages: [] },
+  setMessageList: () => null,
+  hasSeenMessage: false,
+  setSeenMessage: () => null,
 });
 
 interface IChatContextProvider {
   children: React.JSX.Element;
 }
 
+var selectedChatCompare: any;
 const ChatContextProvider = (props: IChatContextProvider) => {
   const { apiData, loading } = useApiRequest(AppConfig.endpoints.profile, true);
   const {
@@ -60,12 +81,18 @@ const ChatContextProvider = (props: IChatContextProvider) => {
   } = useApiRequest(AppConfig.endpoints.chats, true);
   const [currentChat, setCurrentChat] = useState<Chat>();
   const userId = getLoggedUser();
+  const { apiRequestService: readMessageService } = useApiRequest();
   const [notifications, setNotifications] = useState<Record<string, number>>(
     {}
   );
   const [onlineUsers, setOnlineUsers] = useState<
     { userId: string; socketId: string }[]
   >([]);
+  const [messageList, setMessageList] = useState<{
+    count: number;
+    messages: Message[];
+  }>({ count: 0, messages: [] });
+  const [hasSeenMessage, setSeenMessage] = useState(false);
   const [socket, setSocket] = useState<any>(null);
 
   useEffect(() => {
@@ -113,6 +140,33 @@ const ChatContextProvider = (props: IChatContextProvider) => {
     return () => socket.off("getOnlineUsers");
   }, [socket]);
 
+  useEffect(() => {
+    if (socket === null) return;
+    const handleMessages = (message: Message, user: string) => {
+      console.log(user, "userid");
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare?.id !== message.chat.id
+      ) {
+        console.log("inside sssss");
+        fetchChats();
+      } else {
+        console.log("inside vvvvvv");
+        setMessageList((prev: { count: number; messages: Message[] }) => {
+          return {
+            count: prev.count + 1,
+            messages: [...prev.messages, message],
+          };
+        });
+        setSeenMessage(false);
+        message.sender.id !== userId && readMessage(selectedChatCompare?.id);
+        fetchChats();
+      }
+    };
+    socket.on("receive-message", handleMessages);
+    return () => socket?.off("receive-message", handleMessages);
+  }, [socket, currentChat]);
+
   const changeCurrentChat = (chat: Chat | undefined) => {
     setCurrentChat(chat);
   };
@@ -121,6 +175,19 @@ const ChatContextProvider = (props: IChatContextProvider) => {
     setNotifications((val) => {
       return { ...val, [chatId]: 0 };
     });
+  };
+
+  const readMessage = async (chatId: string) => {
+    const res = await readMessageService<{}, Message[]>({
+      method: "put",
+      url: `${AppConfig.endpoints.message}/${chatId}`,
+    });
+    if (res.success === true) {
+      const readUsersList = res.data?.at(-1)?.readBy;
+      const senderId = res.data?.at(-1)?.sender.id;
+      socket.emit("read-message", senderId, readUsersList);
+    }
+    return res;
   };
 
   const fetchChats = async () => {
@@ -149,6 +216,12 @@ const ChatContextProvider = (props: IChatContextProvider) => {
       notifications,
       // changeNotifications,
       onlineUsers,
+      readMessage,
+      selectedChatCompare,
+      messageList,
+      setMessageList,
+      hasSeenMessage,
+      setSeenMessage,
     }),
     [
       apiData,
@@ -165,6 +238,12 @@ const ChatContextProvider = (props: IChatContextProvider) => {
       // changeNotifications,
       changeCurrentChat,
       onlineUsers,
+      readMessage,
+      selectedChatCompare,
+      messageList,
+      setMessageList,
+      hasSeenMessage,
+      setSeenMessage,
     ]
   );
 
