@@ -18,7 +18,7 @@ export function Router() {
     } else {
       navigate("/");
     }
-  }, [location]);
+  }, [location.pathname]);
   return (
     <div className="app">
       <Routes>
