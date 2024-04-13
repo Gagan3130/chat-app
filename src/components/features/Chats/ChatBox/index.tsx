@@ -24,9 +24,6 @@ import { useApiRequest } from "../../../../hooks/useApiRequestService";
 import { AppConfig } from "../../../../api/endpoints";
 import { Message } from "../../../../interfaces/types.lib";
 import ScrollabelChat from "../ScrollableChat";
-import animationData from "../../../../animations/typing.json";
-import Lottie from "react-lottie";
-import EmptyChatBox from "../EmptyChatBox";
 import SettingIcon from "../../../ui/Icons/setting.svg";
 import SearchMessageDrawer from "../SearchMessageDrawer";
 
@@ -43,42 +40,28 @@ const Chatbox = () => {
     socket,
     onlineUsers,
     notifications,
+    readMessage,
+    setMessageList,
+    messageList,
+    setSeenMessage,
+    hasSeenMessage
   } = useChatContext();
+  var { selectedChatCompare } = useChatContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { apiRequestService: messageService } = useApiRequest();
-  const { apiRequestService: readMessageService } = useApiRequest();
   const [typing, setTyping] = useState(false);
-  const [hasSeenMessage, setSeenMessage] = useState(false);
   const [lastMessagesId, setLastMessagesId] = useState<string>();
-  // const [page, setPage] = useState(1);
   const [istyping, setIsTyping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { loading, apiRequestService: getMessageServices } = useApiRequest();
   const [inputMessage, setInputMessage] = useState("");
   const loggedUser = getLoggedUser();
-  const [messageList, setMessageList] = useState<{
-    count: number;
-    messages: Message[];
-  }>({ count: 0, messages: [] });
 
   const chatUserId = currentChat?.users.find(
     (item) => item.id !== loggedUser
   )?.id;
 
   const isOnline = onlineUsers.some((elem) => elem.userId === chatUserId);
-
-  const readMessage = async (chatId: string) => {
-    const res = await readMessageService<{}, Message[]>({
-      method: "put",
-      url: `${AppConfig.endpoints.message}/${chatId}`,
-    });
-    if (res.success === true) {
-      const readUsersList = res.data?.at(-1)?.readBy;
-      const senderId = res.data?.at(-1)?.sender.id;
-      socket.emit("read-message", senderId, readUsersList);
-    }
-    return res;
-  };
 
   useEffect(() => {
     if (socket === null) return;
@@ -196,7 +179,7 @@ const Chatbox = () => {
         console.log("inside vvvvvv");
         setMessageList((prev: { count: number; messages: Message[] }) => {
           return {
-            count: prev.count + 1, 
+            count: prev.count + 1,
             messages: [...prev.messages, message],
           };
         });
