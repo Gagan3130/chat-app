@@ -33,7 +33,6 @@ const Login = () => {
       method: "post",
       body: payload,
     });
-    // console.log(response?.data,"response")
     if (response?.success) {
       cookiesStore.set({
         key: AppConstants.cookieKeys.TOKEN,
@@ -120,9 +119,6 @@ const Login = () => {
           isLoading={loading}
         >
           Login
-        </Button>
-        <Button width="100%" colorScheme="red" variant="solid">
-          Get Guest User Details
         </Button>
       </VStack>
     </form>

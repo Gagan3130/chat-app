@@ -20,6 +20,7 @@ export type Message = {
     content: string;
     chat: Chat;
     id: string;
-    createdAt: Date
+    createdAt: Date;
+    updatedAt: Date;
     readBy: User[]
 }
