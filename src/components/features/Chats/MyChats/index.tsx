@@ -182,7 +182,10 @@ const MyChats = () => {
                             ?.name
                     }
                     avatarImageSrc={
-                      chat?.users.find((item) => item.id !== loggedUser)?.pic
+                      !chat?.isGroupChat
+                        ? chat?.users.find((item) => item.id !== loggedUser)
+                            ?.pic
+                        : undefined
                     }
                     chatName={
                       !chat.isGroupChat

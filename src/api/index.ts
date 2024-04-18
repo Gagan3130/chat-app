@@ -87,6 +87,6 @@ export async function apiRequest<BodyType, ResponseType>(
     const isWindow = typeof window !== 'undefined';
     cookiesStore.deleteAll({path: '/'});
     if (isWindow) {
-      window.location.reload();
+      window.location.href = '/'
     }
   };

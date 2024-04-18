@@ -37,11 +37,12 @@ export const useApiRequest = (apiUrl?: string, canCallApi = false) => {
   );
 
   const getApiData = () => {
-    apiUrl && apiRequestService({
-      method: "get",
-      url: apiUrl,
-    });
-  }
+    apiUrl &&
+      apiRequestService({
+        method: "get",
+        url: apiUrl,
+      });
+  };
 
   useEffect(() => {
     canCallApi &&

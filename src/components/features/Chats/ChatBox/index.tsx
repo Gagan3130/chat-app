@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/layout";
 import { useChatContext } from "../../../../context/chatProvider";
 import {
   Avatar,
@@ -8,13 +8,11 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, SearchIcon, ViewIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   getLoggedUser,
-  getSender,
   getSenderFull,
 } from "../../../../lib/utils.lb";
 import MyProfile from "../../MyProfile";
@@ -26,9 +24,6 @@ import { Message } from "../../../../interfaces/types.lib";
 import ScrollabelChat from "../ScrollableChat";
 import SettingIcon from "../../../ui/Icons/setting.svg";
 import SearchMessageDrawer from "../SearchMessageDrawer";
-
-// "https://talk-a-tive.herokuapp.com"; -> After deployment
-var selectedChatCompare: any;
 
 const Chatbox = () => {
   const {
@@ -44,7 +39,7 @@ const Chatbox = () => {
     setMessageList,
     messageList,
     setSeenMessage,
-    hasSeenMessage
+    hasSeenMessage,
   } = useChatContext();
   var { selectedChatCompare } = useChatContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -248,7 +243,10 @@ const Chatbox = () => {
                       ?.name
               }
               src={
-                currentChat?.users.find((item) => item.id !== loggedUser)?.pic
+                !currentChat?.isGroupChat
+                  ? currentChat?.users.find((item) => item.id !== loggedUser)
+                      ?.pic
+                  : undefined
               }
             />
           </div>

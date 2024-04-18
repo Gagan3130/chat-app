@@ -31,7 +31,7 @@ const MyMessages = ({ item }: { item: Message }) => {
         ml={"8px"}
         color="grey"
       >
-        {getChatTime(item.createdAt)}
+        {getChatTime(item.updatedAt)}
       </Text>
     </Box>
   );
@@ -67,7 +67,7 @@ const OtherUserMessages = ({
           ml={"8px"}
           color="grey"
         >
-          {getChatTime(item.createdAt)}
+          {getChatTime(item.updatedAt)}
         </Box>
       </div>
     </Box>
@@ -147,6 +147,7 @@ const ScrollabelChat = ({
                 position="relative"
                 id={`message-${item.id}`}
               >
+                <MyMessages item={item} />
                 {!isSameSender && (
                   <Box
                     as="span"
@@ -159,7 +160,6 @@ const ScrollabelChat = ({
                     <TailOut colour="#dcf8c6" />
                   </Box>
                 )}
-                <MyMessages item={item} />
                 {hasSeen && item.id === lastMessage?.id && (
                   <Text
                     position="absolute"
@@ -187,16 +187,11 @@ const ScrollabelChat = ({
               position="relative"
               id={`message-${item.id}`}
             >
-              {!isSameSender && item.chat.isGroupChat && (
-                <Avatar
-                  size="sm"
-                  cursor="pointer"
-                  name={item.sender.name}
-                  src={item.sender.pic}
-                  position="absolute"
-                  left={"10px"}
-                />
-              )}
+              <OtherUserMessages
+                item={item}
+                showName={item.chat.isGroupChat && !isSameSender}
+              />
+
               {!isSameSender && (
                 <Box
                   as="span"
@@ -209,10 +204,16 @@ const ScrollabelChat = ({
                   <TailInIcon colour="#ffffff" />
                 </Box>
               )}
-              <OtherUserMessages
-                item={item}
-                showName={item.chat.isGroupChat && !isSameSender}
-              />
+              {!isSameSender && item.chat.isGroupChat && (
+                <Avatar
+                  size="sm"
+                  cursor="pointer"
+                  name={item.sender.name}
+                  src={item.sender.pic}
+                  position="absolute"
+                  left={"10px"}
+                />
+              )}
             </Box>
           </>
         );
